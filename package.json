@@ -1,0 +1,39 @@
+{
+  "name": "metalsmith-markdown-parse",
+  "description": "A metalsmith plugin to parse markdown into file metadata",
+  "repository": "git://github.com/contentascode/metalsmith-markdown-parse.git",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint src/*.js",
+    "build": "babel -d lib src",
+    "build:watch": "nodemon --watch src --exec npm run build",
+    "test": "npm -s run lint && npm -s run build &&  mocha --compilers js:babel-register",
+    "postversion": "git push --follow-tags",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "assert-dir-equal": "^1.0.1",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-stack-trace-sourcemap": "^1.0.2",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^3.19.0",
+    "eslint-config-prettier": "^2.1.1",
+    "metalsmith": "^2.3.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.4",
+    "source-map-support": "^0.4.15"
+  },
+  "dependencies": {
+    "async": "^2.4.1",
+    "commonmark": "^0.28.1",
+    "debug": "^3.1.0",
+    "lodash": "^4.17.10",
+    "markdown-it": "^8.4.2",
+    "marked": "^0.5.0",
+    "minimatch": "^3.0.0"
+  }
+}
