@@ -6,6 +6,7 @@ const marked = require('marked');
 const commonmark = require('commonmark');
 // default mode
 const md = require('markdown-it')();
+const pug = require('pug');
 
 /**
  * Expose `plugin`.
@@ -32,7 +33,7 @@ module.exports = plugin;
 //   - [Answer Title](#workflow-label-3)
 
 function plugin(options) {
-  const { pattern = '**/*.md', title = 'Workflow', replace = '' } = options || {};
+  const { pattern = '**/*.md', title = 'Workflow', replace = '', layout = 'question.pug' } = options || {};
 
   return function markdown_parse(files, metalsmith, done) {
     const tree = {};
@@ -75,90 +76,241 @@ function plugin(options) {
 
         const tokens = marked.lexer(file.contents.toString(), options);
         const { name: current_name } = path.parse(key);
-        // console.log('tokens', JSON.stringify(tokens, true, 2));
         tree[key] = tokens.reduce(
-          ({ workflow, current, heading, in_workflow, in_list, in_quote }, { type, depth, text }) => {
-            // console.log(
-            //   '{ workflow, current, heading, in_workflow, in_list, in_quote }',
-            //   JSON.stringify({ workflow, current, heading, in_workflow, in_list, in_quote }, true, 2)
-            // );
+          ({ workflow, current, heading, in_workflow, in_list, in_quote, start }, { type, depth, text }, tok) => {
+            // console.log('tok', tok);
+            // console.log('{ current, heading, start }', JSON.stringify({ current, heading, start }, true, 2));
             // console.log('{ type, depth, text }', JSON.stringify({ type, depth, text }, true, 2));
-            const [t, c, h, iw, il, iq] =
+            const [t, c, h, iw, il, iq, s] =
               type === 'heading' && depth === 2 && text === title
-                ? [workflow, current, '', false]
-                : type === 'heading' && depth === 3
+                ? [workflow, current, '', true, in_list, in_quote, start]
+                : type === 'heading' && depth === 2 && text !== title
                   ? [
-                      { ...workflow, [text]: { quote: '', description: '', list: [] } },
-                      current,
-                      text,
-                      true,
-                      in_list,
-                      in_quote
-                    ]
-                  : type === 'blockquote_start'
-                    ? [workflow, current, heading, in_workflow, in_list, true]
-                    : type === 'list_item_start'
-                      ? [workflow, current, heading, in_workflow, true, in_quote]
-                      : type === 'text' && in_list
-                        ? [
-                            {
-                              ...workflow,
+                      {
+                        ...workflow,
+                        ...(start != 0 && heading !== ''
+                          ? {
                               [heading]: {
                                 ...workflow[heading],
-                                list: [...workflow[heading].list, text]
+                                raw: marked.parser(
+                                  Object.defineProperty(
+                                    tokens
+                                      .slice(start, tok)
+                                      .filter(t => !(t.type === 'heading' && t.depth === 3))
+                                      .map(t => ({ ...t, depth: t.depth - 2 })),
+                                    'links',
+                                    { value: {} }
+                                  )
+                                )
                               }
-                            },
-                            current,
-                            heading,
-                            in_workflow,
-                            in_list,
-                            in_quote
-                          ]
-                        : (type === 'paragraph' || type === 'space') && in_quote
+                            }
+                          : null)
+                      },
+                      current,
+                      heading,
+                      false,
+                      in_list,
+                      in_quote,
+                      start
+                    ]
+                  : type === 'heading' && depth === 3
+                    ? [
+                        {
+                          ...workflow,
+                          [text]: { quote: '', description: '', list: [] },
+                          ...(start != 0
+                            ? {
+                                [heading]: {
+                                  ...workflow[heading],
+                                  raw: marked.parser(
+                                    Object.defineProperty(
+                                      tokens
+                                        .slice(start, tok)
+                                        .filter(t => !(t.type === 'heading' && t.depth === 3))
+                                        .map(t => ({ ...t, depth: t.depth - 2 })),
+                                      'links',
+                                      { value: {} }
+                                    )
+                                  )
+                                }
+                              }
+                            : null)
+                        },
+                        current,
+                        text,
+                        in_workflow,
+                        in_list,
+                        in_quote,
+                        tok
+                      ]
+                    : type === 'blockquote_start'
+                      ? [workflow, current, heading, in_workflow, in_list, true, start]
+                      : type === 'list_item_start'
+                        ? [workflow, current, heading, in_workflow, true, in_quote, start]
+                        : type === 'text' && in_list
                           ? [
                               {
                                 ...workflow,
                                 [heading]: {
                                   ...workflow[heading],
-                                  quote: workflow[heading].quote + (type === 'paragraph' ? text : '\n')
+                                  list: [
+                                    ...(workflow[heading] ? workflow[heading].list : {}),
+                                    {
+                                      href: text.replace(/\[(.*?)\]\((.*)\)$/gm, '$2'),
+                                      title: text.replace(/\[(.*?)\]\((.*)\)$/gm, '$1')
+                                    }
+                                  ]
                                 }
                               },
                               current,
                               heading,
                               in_workflow,
                               in_list,
-                              in_quote
+                              in_quote,
+                              start
                             ]
-                          : (type === 'paragraph' || type === 'space') && in_workflow && !in_quote && !in_list
+                          : (type === 'paragraph' || type === 'space') && in_quote
                             ? [
                                 {
                                   ...workflow,
                                   [heading]: {
                                     ...workflow[heading],
-                                    description: workflow[heading].description + (type === 'paragraph' ? text : '\n')
+                                    quote: workflow[heading].quote + (type === 'paragraph' ? text : '\n')
                                   }
                                 },
                                 current,
                                 heading,
                                 in_workflow,
                                 in_list,
-                                in_quote
+                                in_quote,
+                                start
                               ]
-                            : type === 'list_item_end'
-                              ? [workflow, current, heading, false, in_quote]
-                              : type === 'blockquote_end'
-                                ? [workflow, current, heading, in_workflow, in_list, false]
-                                : [workflow, current, heading, in_workflow, in_list, in_quote];
+                            : (type === 'paragraph' || type === 'space') && in_workflow && !in_quote && !in_list
+                              ? [
+                                  {
+                                    ...workflow,
+                                    [heading]: {
+                                      ...workflow[heading],
+                                      description: workflow[heading].description + (type === 'paragraph' ? text : '\n')
+                                    }
+                                  },
+                                  current,
+                                  heading,
+                                  in_workflow,
+                                  in_list,
+                                  in_quote,
+                                  start
+                                ]
+                              : type === 'list_item_end'
+                                ? [workflow, current, heading, in_workflow, false, in_quote, start]
+                                : type === 'blockquote_end'
+                                  ? [workflow, current, heading, in_workflow, in_list, false, start]
+                                  : [workflow, current, heading, in_workflow, in_list, in_quote, start];
 
-            return { workflow: t, current: c, heading: h, in_workflow: iw, in_list: il, in_quote: iq };
+            return { workflow: t, current: c, heading: h, in_workflow: iw, in_list: il, in_quote: iq, start: s };
           },
-          { workflow: {}, current: '', heading: '', in_workflow: false, in_list: false, in_quote: false }
+          { workflow: {}, current: '', heading: '', in_workflow: false, in_list: false, in_quote: false, start: 0 }
         );
         // console.log('tree[key]', JSON.stringify(tree[key], true, 2));
         function reverseString(str) {
           return str === '' ? '' : reverseString(str.substr(1)) + str.charAt(0);
         }
-        file.contents = new Buffer(file.contents.toString().replace(/## Workflow((\s|\S)*?)^## /gm, replace + '## '));
+
+        const startSlug = Object.keys(tree[key].workflow)[0];
+
+        Object.keys(tree[key].workflow).forEach(index => {
+          // console.log('index', index);
+          const { description, quote, list, raw = '' } = tree[key].workflow[index];
+          // console.log('question', question);
+          const newKey = key.replace('.md', '') + '/questions/' + index + '.md';
+          // console.log('newKey', newKey);
+          //           const contents = `
+          // # ${question.description}
+          // ${question.quote !== '' ? '> ' + question.quote : ''}
+          // ${question.list.map(answer => '  - ' + answer.replace('](#', '](../')).join('\n')}
+          // ${question.raw}
+          // `;
+          // console.log('contents', contents);
+
+          // html2jade.convertHtml(raw, { bodyless: true }, function(err, jade) {
+          //   const newFile = {
+          //     layout,
+          //     description,
+          //     quote,
+          //     list,
+          //     raw,
+          //     origin: key,
+          //     ...(file.permalink ? { permalink: path.join(file.permalink, index) } : null),
+          //     contents: new Buffer(jade)
+          //   };
+          //   files[newKey] = newFile;
+          // });
+
+          // Detect filtered collection transclusion link such as
+          //  :[](organisations?tags=ddos,defaced&lang=en,es)
+
+          const selector = /:<a href="(.*)"><\/a>/.exec(raw);
+          const [collection_name, filter = ''] = selector ? selector[1].split('?') : [];
+          const metadata = metalsmith.metadata();
+          const collection = selector ? metadata[collection_name] : [];
+          // console.log('filter', filter);
+          const processed = raw.replace(
+            /:<a href="(.*)"><\/a>/gm,
+            collection
+              .filter(item => {
+                // console.log('item', item);
+                // console.log('item', item);
+                return filter.split('&').some(f => {
+                  // console.log('key', f.split('=')[0]);
+                  // console.log('value', f.split('=')[1]);
+                  // console.log('item[key]', item[f.split('=')[0]]);
+                  // console.log(
+                  //   'true?',
+                  //   item[f.split('=')[0]]
+                  //     .split(',')
+                  //     .map(s => s.trim())
+                  //     .includes(f.split('=')[1])
+                  // );
+                  return f.split('=')[0] != ''
+                    ? item[f.split('=')[0]]
+                        .split(',')
+                        .map(s => s.trim())
+                        .includes(f.split('=')[1])
+                    : true;
+                });
+              })
+              .map(item =>
+                pug.renderFile(
+                  path.join(
+                    metalsmith.dir || metalsmith._directory,
+                    metalsmith._src || metalsmith._source,
+                    '../code/templates',
+                    'organisation.pug'
+                  ),
+                  item
+                )
+              )
+              .join('<br>')
+          );
+          // console.log('processed', processed);
+          const newFile = {
+            layout,
+            description,
+            quote,
+            list,
+            raw: processed,
+            origin: key,
+            ...(file.permalink ? { permalink: path.join(file.permalink, index) } : null),
+            contents: new Buffer(processed)
+          };
+          files[newKey] = newFile;
+        });
+
+        file.contents = new Buffer(
+          file.contents
+            .toString()
+            .replace(/## Workflow((\s|\S)*?)^## /gm, replace.replace('$start', 'questions/' + startSlug) + '\n## ')
+        );
         // console.log('file.contents', file.contents.toString());
         file[title.toLowerCase()] = tree[key].workflow;
         // console.log('file[' + title.toLowerCase() + ']', tree[key].workflow);
