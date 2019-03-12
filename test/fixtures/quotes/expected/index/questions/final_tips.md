@@ -11,3 +11,9 @@
 </ul>
 </li>
 </ul>
+<h2 id="helpful-resources">Helpful Resources</h2>
+<ul>
+<li><a href="https://www.wired.com/story/what-do-to-if-you-are-being-doxed/">What to Do if You&#39;re Being Doxed</a></li>
+<li><a href="http://femtechnet.org/csov/lock-down-your-digital-identity/">Locking Down Your Digital Identity</a></li>
+<li><a href="https://medium.com/@EqualityLabs/anti-doxing-guide-for-activists-facing-attacks-from-the-alt-right-ec6c290f543c">Anti-doxing Guide for Activists Facing Attacks from the Alt-Right</a></li>
+</ul>

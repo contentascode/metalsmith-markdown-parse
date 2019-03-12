@@ -41,19 +41,19 @@ describe('metalsmith-markdown-parse', function() {
       })
   })
 
-  // it('should deal with a complex example', function(done) {
-  //   Metalsmith('test/fixtures/complex')
-  //     .metadata({ organisations: [] })
-  //     .use(
-  //       parse({
-  //         title: 'Workflow',
-  //         replace: '<a href="$start">Start</a>',
-  //       })
-  //     )
-  //     .build(function(err) {
-  //       if (err) return done(err)
-  //       equal('test/fixtures/complex/build', 'test/fixtures/complex/expected')
-  //       done()
-  //     })
-  // })
+  it('should deal with a complex example', function(done) {
+    Metalsmith('test/fixtures/complex')
+      .metadata({ organisations: [] })
+      .use(
+        parse({
+          title: 'Workflow',
+          replace: '<a href="$start">Start</a>',
+        })
+      )
+      .build(function(err) {
+        if (err) return done(err)
+        equal('test/fixtures/complex/build', 'test/fixtures/complex/expected')
+        done()
+      })
+  })
 })

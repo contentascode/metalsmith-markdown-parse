@@ -218,7 +218,8 @@ function plugin(options) {
                 .toString()
                 .replace(
                   /## Workflow((\s|\S)*?)(.*\n)*/gm,
-                  replace.replace('$start', 'questions/' + tree[key][0].id)
+                  replace.replace('$start', 'questions/' + tree[key][0].id) +
+                    '\n'
                 )
             )
           : file.contents
@@ -236,36 +237,22 @@ function plugin(options) {
     async.mapValues(files, process, err => {
       if (err) throw err
 
-      debug('tree', JSON.stringify(tree, true, 2))
+      debug('Object.keys(files)', JSON.stringify(Object.keys(files), true, 2))
 
-      // const dictionary = Object.keys(tree).reduce(function(acc, val) {
-      //   const merge = Object.keys(tree[val].dictionary).reduce(
-      //     function(a, v) {
-      //       return { ...a, [v]: { ...a[v], ...tree[val].dictionary[v] } };
-      //     },
-      //     { ...acc }
-      //   );
-      //   // console.log('merge', merge)
-      //   return { ...acc, ...merge };
-      // }, {});
-      //
-      // // Map file names of the form `link.md`
-      // const mapping = Object.keys(dictionary).reduce((acc, val) => ({ ...acc, [val + '.md']: dictionary[val] }), {});
-      //
-      // // Map file names of the form `link/index.md`
-      // const mapping_folder = Object.keys(dictionary).reduce(
-      //   (acc, val) => ({ ...acc, [val + '/index.md']: dictionary[val] }),
-      //   {}
-      // );
+      Object.keys(files)
+        .filter(k => k.endsWith('_end.md'))
+        .forEach(k => {
+          const tips =
+            k
+              .split('/')
+              .slice(0, -1)
+              .join('/') + '/final_tips.md'
+          files[k].contents =
+            files[k].contents + (files[tips] ? files[tips].contents : '')
+        })
 
-      // debug('mappings: ', Object.keys(mapping));
+      // Add #final_tips section in _end questions.
 
-      // Object.keys(files).forEach(key => {
-      //   const match = Object.keys(mapping).includes(key) || Object.keys(mapping_folder).includes(key);
-      //   if (match) {
-      //     files[key] = { ...files[key], ...mapping[key] };
-      //   }
-      // });
       done()
     })
   }

@@ -160,7 +160,7 @@ Have you identified the best strategy for you?
  - [Yes](#final-tips)
  - :[No](organisations?services=harassment)
 
-### final-tips
+### final_tips
 
 - **Document harassment:** It is helpful to document the attacks or any other incident you may be witnessing: take screenshots, save the messages you receive from harassers, etc. If you feel overwhelmed, try to think of someone you trust who could document the incidents for you for a while. You should trust deeply the person who will manage this documentation, as you will need to hand them over credentials to your personal accounts. Once you feel you can regain control of their account, remember to change your passwords.
 
@@ -172,7 +172,7 @@ Have you identified the best strategy for you?
     - You can find instructions for setting up 2-factor authentication on the major platforms [here](https://www.eff.org/deeplinks/2016/12/12-days-2fa-how-enable-two-factor-authentication-your-online-accounts).
 
 
-## Helpful Resources
+#### Helpful Resources
 
 - [What to Do if You're Being Doxed](https://www.wired.com/story/what-do-to-if-you-are-being-doxed/)
 - [Locking Down Your Digital Identity](http://femtechnet.org/csov/lock-down-your-digital-identity/)

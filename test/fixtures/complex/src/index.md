@@ -24,8 +24,6 @@ As a start, consider:
 - Was it built using Wordpress or another popular CMS platform?
 - Who is your web hosting provider? If you do not know, you can use a tool [like this](http://www.whoishostingthis.com/) to help.
 
-[Diagnose your problem](#workflow)
-
 ## Workflow
 
 ### error_message
@@ -90,7 +88,7 @@ Does your website load but the appearance and content are not what you expect to
 
 Has this helped?
 
-- [Yes](#tips)
+- [Yes](#resolved_end)
 - [No](#website_down_end)
 
 
@@ -100,19 +98,19 @@ Has this helped?
 
 Has this helped?
 
-- [Yes](#tips)
+- [Yes](#resolved_end)
 - [No, I need legal support](#legal_end)
 - [No, I need technical support](#website_down_end)
 
 ### site_not_loading_end
 
 > Your hosting company may be having problems, in which case you may be facing a ***hosting problem***. Can you visit the website of your hosting company?  Note that this is **not** the admin section of your own site, but the company or organization you work with to host your site.
->
+
 > Look or search for a "status" blog (e.g. status.dreamhost.com), and also search on twitter.com for other users discussing downtime at the hosting company - a simple search like “(company name) down” can often reveal if many others are having the same problem.
 
 Has this helped?
 
-- [Yes](#tips)
+- [Yes](#resolved_end)
 - [No, the website of my hosting provider is not down](#hosting_working_end)
 - [No, i need technical support](#website_down_end)
 
@@ -125,7 +123,7 @@ Has this helped?
 
 Do you need further help?
 
-- [No](#tips)
+- [No](#resolved_end)
 - [Yes, I need help to restore my network connection](#website_down_end)
 - [Yes, this is not a network problem and my website is down for everyone](#similar_content_censored)
 
@@ -133,13 +131,14 @@ Do you need further help?
 ### similar_content_censored_end
 
 > Try visiting websites with similar content to your website. Also try using [Tor](https://www.torproject.org/projects/gettor.html) or [Psiphon](https://psiphon.ca/products.php) to access your site.
-> If you can visit your site via Tor or Psiphon, you have a ***censorship problem*** - you are still online for other parts of the world, but are being censored in your own country.
+If you can visit your site via Tor or Psiphon, you have a ***censorship problem*** - you are still online for other parts of the world, but are being censored in your own country.
 
 Would you like to do something about this censorship?
 
 - [Yes, I would like to report this publicly and need support for my advocacy campaign](#advocacy_end)
 - [Yes, I would like to find a solution to make my website accessible](#website_down_end)
-- [No](#tips)
+- [No](#resolved_end)
+
 
 ### loading_intermittently_end
 
@@ -165,7 +164,6 @@ Would you like to do something about this censorship?
 
 For a full list of trusted organizations that can provide secure hosting, see [this section](#web_hosting_end)
 
-
 ### defaced_attack_end
 
 > Website defacement is a practice where an attacker replaces the content or the visual appearance of the website with their own content. These attacks are usually conducted by either exploiting vulnerabilities in unmaintained CMS platforms without the latest security updates or by using stolen hosting account usernames/passwords.
@@ -179,16 +177,16 @@ For a full list of trusted organizations that can provide secure hosting, see [t
 
 Have this recommendations helped?
 
-- [Yes](#tips)
+- [Yes](#resolved_end)
 - [No](#website_down_end)
 
 
 ### website_down_end
 
 > If you still need help after all the questions you answered you can contact a trusted organization and ask for support:
-
+>
 > Before you get in touch, please ask yourself the following questions:
-
+>
 > - How is the company/organization structured and sustained? What types of vetting or reporting are they required to do, if any?
 > - Consider what country/countries they have a legal presence in and which they would be required to comply with law enforcement and other legal requests
 > - What logs are created, and for how long are they available?
@@ -222,7 +220,28 @@ Have this recommendations helped?
 :[](organisations?services=ddos)
 
 
-## Tips
+### web_hosting_end
+
+> If you are looking for a trusted organization to host your website in a secure server, please see the list below:
+>
+> Before you get in touch with these organizations, please think about these questions:
+>
+> - Do they offer full support in moving your site over to their service?
+> - Are the services equal to or better than your current host, at least for the tools/services you use? Top things to check are:
+>     - Management dashboards like cPanel
+>     - Email accounts (how many, quotas, access via SMTP, IMAP)
+>     - Databases (how many, types, access)
+>     - Remote access via SFTP/SSH
+>     - Support for the programming language (PHP, Perl, Ruby, cgi-bin access...) or CMS (Drupal, Joomla, Wordpress…) that your site uses
+
+:[](organisations?services=web_hosting)
+
+
+### resolved_end
+
+We hope your problem was solved.
+
+### final_tips
 
 - **Backups** - In addition to the services and suggestions below, it’s always a good idea to make sure you have backups (that you store somewhere other than the same place your website is!). Many hosts and website platforms have this included, but it’s best to also have additional, offline copies.
 
@@ -230,7 +249,7 @@ Have this recommendations helped?
 
 - **Monitoring** - There are many services that can constantly check on your site and email or text you if it goes down. [This Mashable article](http://mashable.com/2010/04/09/free-uptime-monitoring/) lists 10 popular ones. Be aware that the email or phone number you use for monitoring will be clearly associated with managing the website.
 
-## Resources
+#### Resources
 
 - [My Website is Down](https://github.com/OpenInternet/MyWebsiteIsDown)
 - [Keeping your site alive](https://www.eff.org/keeping-your-site-alive)
