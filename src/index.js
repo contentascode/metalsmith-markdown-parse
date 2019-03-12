@@ -247,8 +247,13 @@ function plugin(options) {
               .split('/')
               .slice(0, -1)
               .join('/') + '/final_tips.md'
-          files[k].contents =
-            files[k].contents + (files[tips] ? files[tips].contents : '')
+          if (files[tips]) {
+            const arr_tips = files[tips].contents
+              .toString()
+              .split('<h2 id="resources">Resources</h2>')
+            files[k].tips = arr_tips[0]
+            files[k].resources = arr_tips[1]
+          }
         })
 
       // Add #final_tips section in _end questions.

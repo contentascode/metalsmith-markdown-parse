@@ -2,6 +2,9 @@ const rimraf = require('rimraf')
 // let assert = require('assert');
 const equal = require('assert-dir-equal')
 const Metalsmith = require('metalsmith')
+const layouts = require('metalsmith-layouts')
+const debug = require('metalsmith-debug')
+const paths = require('metalsmith-paths')
 const parse = require('..')
 
 describe('metalsmith-markdown-parse', function() {
@@ -18,6 +21,9 @@ describe('metalsmith-markdown-parse', function() {
           replace: '<a href="$start">Start</a>',
         })
       )
+      .use(paths())
+      .use(debug())
+      .use(layouts({ default: 'default.pug', directory: '../../layouts' }))
       .build(function(err) {
         if (err) return done(err)
         equal('test/fixtures/basic/build', 'test/fixtures/basic/expected')
@@ -34,6 +40,8 @@ describe('metalsmith-markdown-parse', function() {
           replace: '<a href="$start">Start</a>',
         })
       )
+      .use(paths())
+      .use(layouts({ default: 'default.pug', directory: '../../layouts' }))
       .build(function(err) {
         if (err) return done(err)
         equal('test/fixtures/quotes/build', 'test/fixtures/quotes/expected')
@@ -50,6 +58,8 @@ describe('metalsmith-markdown-parse', function() {
           replace: '<a href="$start">Start</a>',
         })
       )
+      .use(paths())
+      .use(layouts({ default: 'default.pug', directory: '../../layouts' }))
       .build(function(err) {
         if (err) return done(err)
         equal('test/fixtures/complex/build', 'test/fixtures/complex/expected')

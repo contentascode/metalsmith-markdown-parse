@@ -20,8 +20,14 @@ Another question?
 
 Some final text.
 
-#### An optional sub title
-
 :[](organisations?services=web_protection)
+
+### final_tips
+
+Some tips
+
+#### Resources
+
+Some resources
 
 ## The end

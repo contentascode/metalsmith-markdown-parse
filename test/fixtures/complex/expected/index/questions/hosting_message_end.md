@@ -15,7 +15,7 @@
 <li><p><strong>Monitoring</strong> - There are many services that can constantly check on your site and email or text you if it goes down. <a href="http://mashable.com/2010/04/09/free-uptime-monitoring/">This Mashable article</a> lists 10 popular ones. Be aware that the email or phone number you use for monitoring will be clearly associated with managing the website.</p>
 </li>
 </ul>
-<h2 id="resources">Resources</h2>
+
 <ul>
 <li><a href="https://github.com/OpenInternet/MyWebsiteIsDown">My Website is Down</a></li>
 <li><a href="https://www.eff.org/keeping-your-site-alive">Keeping your site alive</a></li>

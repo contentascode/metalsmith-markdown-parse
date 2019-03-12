@@ -23,7 +23,11 @@
     "babel-register": "^6.26.0",
     "eslint": "^3.19.0",
     "eslint-config-prettier": "^2.1.1",
+    "jstransformer-pug": "^0.3.0",
     "metalsmith": "^2.3.0",
+    "metalsmith-debug": "^1.2.0",
+    "metalsmith-layouts": "^2.3.0",
+    "metalsmith-paths": "^3.0.1",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.4",
     "source-map-support": "^0.4.15"
