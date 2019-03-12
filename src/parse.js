@@ -71,28 +71,28 @@ const content = () =>
         .optrep()
         .map(({ value }) => value)
     )
-    .debug('blockquote')
+    // .debug('blockquote')
     .then(spaces())
     .then(
       paragraph()
         .optrep()
         .map(({ value }) => value)
     )
-    .debug('paragraph')
+    // .debug('paragraph')
     .then(spaces())
     .then(
       list()
         .optrep()
         .map(({ value }) => value)
     )
-    .debug('list')
+    // .debug('list')
     .then(spaces())
     .then(
       paragraph()
         .optrep()
         .map(({ value }) => value)
     )
-    .debug('paragraph')
+    // .debug('paragraph')
     .then(spaces())
 
 const heading = () =>
