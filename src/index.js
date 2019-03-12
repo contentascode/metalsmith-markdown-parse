@@ -217,9 +217,8 @@ function plugin(options) {
               file.contents
                 .toString()
                 .replace(
-                  /## Workflow((\s|\S)*?)^## /gm,
-                  replace.replace('$start', 'questions/' + tree[key][0].id) +
-                    '\n## '
+                  /## Workflow((\s|\S)*?)(.*\n)*/gm,
+                  replace.replace('$start', 'questions/' + tree[key][0].id)
                 )
             )
           : file.contents
