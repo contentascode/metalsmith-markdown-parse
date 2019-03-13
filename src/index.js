@@ -256,7 +256,7 @@ function plugin(options) {
     async.mapValues(files, process, err => {
       if (err) throw err
 
-      // debug('Object.keys(files)', JSON.stringify(Object.keys(files), true, 2))
+      debug('Object.keys(files)', JSON.stringify(Object.keys(files), true, 2))
 
       Object.keys(files)
         .filter(k => k.endsWith('_end.md'))
