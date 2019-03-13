@@ -2,7 +2,7 @@
   "name": "metalsmith-markdown-parse",
   "description": "A metalsmith plugin to parse markdown into file metadata",
   "repository": "git://github.com/contentascode/metalsmith-markdown-parse.git",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "license": "MIT",
   "main": "lib/index.js",
   "scripts": {
