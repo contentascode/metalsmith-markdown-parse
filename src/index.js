@@ -156,12 +156,12 @@ function plugin(options) {
               : []
             const metadata = metalsmith.metadata()
             const collection = selector ? metadata[collection_name] : []
-            // console.log('filter', filter);
+            // console.log('filter', filter)
             const processed = raw.replace(
               /:<a href="(.*)"><\/a>/gm,
               collection
                 .filter(item => {
-                  // console.log('item', item);
+                  // console.log('item', item)
                   return filter.split('&').some(f => {
                     // console.log('key', f.split('=')[0]);
                     // console.log('value', f.split('=')[1]);
@@ -181,7 +181,18 @@ function plugin(options) {
                       : true
                   })
                 })
-                .map(item =>
+                .sort((a, b) => {
+                  const nameA = a.name.toUpperCase() // ignore upper and lowercase
+                  const nameB = b.name.toUpperCase() // ignore upper and lowercase
+                  if (nameA < nameB) {
+                    return -1
+                  }
+                  if (nameA > nameB) {
+                    return 1
+                  }
+                  return 0
+                })
+                .map((item, index) =>
                   pug.renderFile(
                     path.join(
                       metalsmith.dir || metalsmith._directory,
@@ -189,7 +200,14 @@ function plugin(options) {
                       '../code/templates',
                       'organisation.pug'
                     ),
-                    item
+                    {
+                      ...item,
+                      index,
+                      ...metadata,
+                      ...(file.language ? { language: file.language } : null),
+                      ...(file.author ? { author: file.author } : null),
+                      ...(file.date ? { date: file.date } : null),
+                    }
                   )
                 )
                 .join('<br>')
@@ -207,6 +225,7 @@ function plugin(options) {
                 : null),
               contents: new Buffer(processed),
             }
+
             files[newKey] = newFile
           }
         )
@@ -237,7 +256,7 @@ function plugin(options) {
     async.mapValues(files, process, err => {
       if (err) throw err
 
-      debug('Object.keys(files)', JSON.stringify(Object.keys(files), true, 2))
+      // debug('Object.keys(files)', JSON.stringify(Object.keys(files), true, 2))
 
       Object.keys(files)
         .filter(k => k.endsWith('_end.md'))
