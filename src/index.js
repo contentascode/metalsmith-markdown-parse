@@ -142,8 +142,8 @@ function plugin(options) {
 
         tree[key].forEach(
           ({ id: index, description, quote, list, html: raw = '' }) => {
-            // console.log('index', index);
-            // console.log("question id", index);
+            // console.log('index', index)
+            // console.log('question id', index)
             const newKey =
               key.replace('.md', '') + '/questions/' + index + '.md'
 
@@ -162,17 +162,17 @@ function plugin(options) {
               collection
                 .filter(item => {
                   // console.log('item', item)
-                  return filter.split('&').some(f => {
-                    // console.log('key', f.split('=')[0]);
-                    // console.log('value', f.split('=')[1]);
-                    // console.log('item[key]', item[f.split('=')[0]]);
+                  return filter.split('&amp;').some(f => {
+                    // console.log('key', f.split('=')[0])
+                    // console.log('value', f.split('=')[1])
+                    // console.log('item[key]', item[f.split('=')[0]])
                     // console.log(
                     //   'true?',
                     //   item[f.split('=')[0]]
                     //     .split(',')
                     //     .map(s => s.trim())
                     //     .includes(f.split('=')[1])
-                    // );
+                    // )
                     return f.split('=')[0] != ''
                       ? item[f.split('=')[0]]
                           .split(',')
