@@ -210,7 +210,7 @@ function plugin(options) {
                     }
                   )
                 )
-                .join('<br>')
+                .join('\n')
             )
             // console.log('processed', processed);
             const newFile = {
