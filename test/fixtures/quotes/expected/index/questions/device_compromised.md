@@ -5,8 +5,8 @@
 <li><a href="https://support.apple.com/en-us/HT201355">iOS - Apple ID</a></li>
 <li><a href="https://support.google.com/accounts/answer/41078?co=GENIE.Platform%3DAndroid&amp;hl=en">Android</a></li>
 </ul>
-</blockquote><article><ul>
+</blockquote><p><ul>
 <li><a href="../account_compromised">Yes</a></li>
 <li><a href="device-acting-suspiciously">No</a></li>
 </ul>
-</article>
+</p>

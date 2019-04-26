@@ -9,8 +9,8 @@ the main platforms in the following list:</p>
 <li><a href="https://www.cybercivilrights.org/online-removal/#tumblr">Tumblr</a></li>
 <li><a href="https://www.cybercivilrights.org/online-removal/#instagram">Instagram</a></li>
 </ul>
-</blockquote><article><ul>
+</blockquote><p><ul>
 <li><a href="../one_more_persons">Yes</a></li>
 <li>:<a href="organisations?services=harassment">No</a></li>
 </ul>
-</article>
+</p>

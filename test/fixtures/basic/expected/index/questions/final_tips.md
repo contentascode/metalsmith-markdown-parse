@@ -1,1 +1,1 @@
-<p>Some tips</p><blockquote></blockquote><article></article>
+<p>Some tips</p><blockquote></blockquote><p></p>

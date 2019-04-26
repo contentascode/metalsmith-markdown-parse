@@ -14,7 +14,7 @@
 <li>Can you &#39;test-drive&#39; your website before you move over via a staging site?</li>
 </ul>
 </blockquote>
-<p></p>
+
 <ul>
 <li><p><strong>Backups</strong> - In addition to the services and suggestions below, it’s always a good idea to make sure you have backups (that you store somewhere other than the same place your website is!). Many hosts and website platforms have this included, but it’s best to also have additional, offline copies.</p>
 </li>

@@ -34,11 +34,17 @@ const spaces = () =>
     .optrep()
     .drop()
 
-const paragraph = () =>
+const paragraph = key => () =>
   pattern({ type: 'paragraph' })
     // .debug("paragraph")
     .then(spaces())
-    .map(({ text }) => ({ description: text }))
+    .map(({ text }) => ({ [key]: text }))
+
+// const description = () =>
+//   pattern({ type: 'paragraph' })
+//     // .debug("paragraph")
+//     .then(spaces())
+//     .map(({ text }) => ({ description: text }))
 
 const blockquote = () =>
   pattern({ type: 'blockquote_start' })
@@ -67,6 +73,13 @@ const list = () =>
 const content = () =>
   spaces()
     .then(
+      paragraph('intro')()
+        .optrep()
+        .map(({ value }) => value)
+    )
+    .then(spaces())
+    // .debug('intro')
+    .then(
       blockquote()
         .optrep()
         .map(({ value }) => value)
@@ -74,11 +87,11 @@ const content = () =>
     // .debug('blockquote')
     .then(spaces())
     .then(
-      paragraph()
+      paragraph('description')()
         .optrep()
         .map(({ value }) => value)
     )
-    // .debug('paragraph')
+    // .debug('description')
     .then(spaces())
     .then(
       list()
@@ -88,11 +101,17 @@ const content = () =>
     // .debug('list')
     .then(spaces())
     .then(
-      paragraph()
+      paragraph('outro')()
         .optrep()
         .map(({ value }) => value)
     )
-    // .debug('paragraph')
+    // .debug('outro')
+    .then(spaces())
+    .then(
+      not(pattern({ type: 'heading', depth: 3 }))
+        .optrep()
+        .map(({value}) => value)
+    )
     .then(spaces())
 
 const heading = () =>
@@ -109,7 +128,10 @@ const workflow = () =>
     .optrep()
     .drop()
     .then(heading())
+    // .debug('after heading')
     .then(question().rep())
+    // .debug('after question rep')
+
 
 // It might be possible to do this in only one pass
 const question_raw = () =>

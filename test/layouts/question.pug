@@ -1,7 +1,12 @@
 if !path.name.endsWith('_end')
-  p= description
+  if intro
+    p= intro
+  if description
+    p= description
   blockquote!= quote
-  article!= list
+  if outro
+    p= outro
+  p!= list
 else
   != contents
   != tips

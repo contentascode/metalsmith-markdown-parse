@@ -1,5 +1,5 @@
-<p>Is the attack based on attributes like race, gender, or religion?</p><blockquote></blockquote><article><ul>
+<p>Is the attack based on attributes like race, gender, or religion?</p><blockquote></blockquote><p><ul>
 <li><a href="../one_more_persons">Yes</a></li>
 <li>:<a href="organisations?services=harassment">No</a></li>
 </ul>
-</article>
+</p>

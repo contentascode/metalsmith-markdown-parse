@@ -1,1 +1,1 @@
-<p>To do...</p><blockquote></blockquote><article></article>
+<p>To do...</p><blockquote></blockquote><p></p>

@@ -162,17 +162,7 @@ Have you identified the best strategy for you?
 
 ### final_tips
 
-- **Document harassment:** It is helpful to document the attacks or any other incident you may be witnessing: take screenshots, save the messages you receive from harassers, etc. If you feel overwhelmed, try to think of someone you trust who could document the incidents for you for a while. You should trust deeply the person who will manage this documentation, as you will need to hand them over credentials to your personal accounts. Once you feel you can regain control of their account, remember to change your passwords.
-
-    - You can find instructions on how to document the incident in [this page](https://www.techsafety.org/documentationtips/).
-
-- **Set up 2-factor authentication** on all your accounts. 2-factor authentication can be very effective for stopping someone from accessing your accounts without your permission. If you can choose, don't use SMS-based 2-factor authentication and choose a different option, based on a phone app or on a security key.
-
-    - If you don't know what solution is best for you, you can check out [this infographic](https://www.accessnow.org/cms/assets/uploads/2017/09/Choose-the-Best-MFA-for-you.png) and [this post](https://www.eff.org/deeplinks/2017/09/guide-common-types-two-factor-authentication-web).
-    - You can find instructions for setting up 2-factor authentication on the major platforms [here](https://www.eff.org/deeplinks/2016/12/12-days-2fa-how-enable-two-factor-authentication-your-online-accounts).
-
-
-#### Helpful Resources
+#### Resources
 
 - [What to Do if You're Being Doxed](https://www.wired.com/story/what-do-to-if-you-are-being-doxed/)
 - [Locking Down Your Digital Identity](http://femtechnet.org/csov/lock-down-your-digital-identity/)

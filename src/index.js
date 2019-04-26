@@ -64,6 +64,7 @@ function plugin(options) {
 
         const parsing = parse.workflow().parse(stream)
         // console.log('parsing.value', JSON.stringify(parsing.value, true, 2))
+        // the workflow_raw parser only splits by questions but parses what's between as raw content.
         const parsing_raw = parse.workflow_raw().parse(stream)
         // console.log(
         //   'parsing_raw.value',
@@ -74,7 +75,7 @@ function plugin(options) {
           ? parsing_raw.value
               .array()
               .map(question =>
-                question.reduce(
+                 question.reduce(
                   ({ ...fields }, field) => ({ ...fields, ...field }),
                   {}
                 )
@@ -85,32 +86,35 @@ function plugin(options) {
 
         processed[key] = parsing.value
           ? parsing.value.array().map(question =>
-              question.reduce(
-                ({ ...fields }, field) => ({
-                  ...fields,
-                  ...(field.quote
-                    ? {
-                        quote: marked.parser(
-                          Object.defineProperty(field.quote, 'links', {
-                            value: {},
-                          })
-                        ),
-                      }
-                    : field.list
-                    ? {
-                        list: marked
-                          .parser(
-                            // field.list
-                            Object.defineProperty(field.list, 'links', {
-                              value: {},
-                            })
-                          )
-                          .replace(/<a href="#/g, '<a href="../'),
-                      }
-                    : field),
-                }),
-                {}
-              )
+            {
+              // console.log('question', question)
+              return question ? question.reduce(
+                    ({ ...fields }, field) => ({
+                      ...fields,
+                      ...(field.quote
+                        ? {
+                            quote: marked.parser(
+                              Object.defineProperty(field.quote, 'links', {
+                                value: {},
+                              })
+                            ),
+                          }
+                        : field.list
+                        ? {
+                            list: marked
+                              .parser(
+                                // field.list
+                                Object.defineProperty(field.list, 'links', {
+                                  value: {},
+                                })
+                              )
+                              .replace(/<a href="#/g, '<a href="../'),
+                          }
+                        : field),
+                    }),
+                    {}
+                  ) : question
+            }
             )
           : []
 
@@ -121,10 +125,11 @@ function plugin(options) {
             ? { ...token, depth: token.depth - 2 }
             : token
 
+        // Add raw key with inter-heading blocks from workflow_raw
         tree[key] = processed[key].map((v, i) => {
           return {
             ...v,
-            html: marked
+            raw: marked
               .parser(
                 Object.defineProperty(
                   raw[key][i].value.map(unindent),
@@ -134,6 +139,7 @@ function plugin(options) {
                   }
                 )
               )
+              // transform local anchor links into link to individual question pages
               .replace(/<a href="#/g, '<a href="../'),
           }
         })
@@ -141,7 +147,7 @@ function plugin(options) {
         // console.log('tree[' + key + ']', JSON.stringify(tree[key], true, 2))
 
         tree[key].forEach(
-          ({ id: index, description, quote, list, html: raw = '' }) => {
+          ({ id: index, intro, description, quote, list, outro, raw = '' }) => {
             // console.log('index', index)
             // console.log('question id', index)
             const newKey =
@@ -157,8 +163,9 @@ function plugin(options) {
             const metadata = metalsmith.metadata()
             const collection = selector ? metadata[collection_name] : []
             // console.log('filter', filter)
+            // console.log('raw', raw)
             const processed = raw.replace(
-              /:<a href="(.*)"><\/a>/gm,
+              /<p>:<a href="(.*)"><\/a><\/p>/gm,
               collection
                 .filter(item => {
                   // console.log('item', item)
@@ -173,12 +180,19 @@ function plugin(options) {
                     //     .map(s => s.trim())
                     //     .includes(f.split('=')[1])
                     // )
-                    return f.split('=')[0] != ''
-                      ? item[f.split('=')[0]]
-                          .split(',')
-                          .map(s => s.trim())
-                          .includes(f.split('=')[1])
-                      : true
+                    //
+                    try {
+                      const ret = f.split('=')[0] != ''
+                        ? item[f.split('=')[0]]
+                            .split(',')
+                            .map(s => s.trim())
+                            .includes(f.split('=')[1])
+                        : true
+                      return ret
+                    }
+                    catch (e) {
+                      console.log(`Error while reading transclusion link in ${key}. Syntax should be \`:[](organisations?services=foo&services=bar)\` and found \`${filter.replace('&amp;', '&')}\` instead.`)
+                    }
                   })
                 })
                 .sort((a, b) => {
@@ -215,15 +229,20 @@ function plugin(options) {
             // console.log('processed', processed);
             const newFile = {
               layout,
+              intro,
               description,
               quote,
               list,
+              outro,
               raw: processed,
               origin: key,
               ...(file.permalink
                 ? { permalink: path.join(file.permalink, index) }
                 : null),
-              contents: new Buffer(processed),
+              contents: new Buffer(
+                processed // remove newline only paragraphs
+                  .replace('<p>\n</p>', '')
+              ),
             }
 
             files[newKey] = newFile
@@ -231,10 +250,12 @@ function plugin(options) {
         )
 
         // If tree[key] has content then we parsed a workflow and replace the section
+        // console.log('file.contents', file.contents.toString())
         file.contents = tree[key][0]
           ? new Buffer(
-              file.contents
-                .toString()
+              // add end of file newline to match until Workflow end.
+              (file.contents
+                .toString() + '\n')
                 .replace(
                   /## Workflow((\s|\S)*?)(.*\n)*/gm,
                   replace.replace('$start', 'questions/' + tree[key][0].id) +
@@ -258,6 +279,7 @@ function plugin(options) {
 
       debug('Object.keys(files)', JSON.stringify(Object.keys(files), true, 2))
 
+      // Add #final_tips section in _end questions.
       Object.keys(files)
         .filter(k => k.endsWith('_end.md'))
         .forEach(k => {
@@ -266,16 +288,17 @@ function plugin(options) {
               .split('/')
               .slice(0, -1)
               .join('/') + '/final_tips.md'
+
           if (files[tips]) {
             const arr_tips = files[tips].contents
               .toString()
-              .split('<h2 id="resources">Resources</h2>')
+              .replace(/<h2 id="resources">Resources<\/h2>/gi, '<-----resource----->')
+              .split('<-----resource----->')
             files[k].tips = arr_tips[0]
             files[k].resources = arr_tips[1]
           }
+          // delete files[tips]
         })
-
-      // Add #final_tips section in _end questions.
 
       done()
     })

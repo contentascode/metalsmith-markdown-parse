@@ -1,7 +1,7 @@
 <blockquote>
 <p>If you would like support to launch a campaign against censorship, please get in touch with organizations that can help with advocacy efforts:</p>
 </blockquote>
-<p></p>
+
 <ul>
 <li><p><strong>Backups</strong> - In addition to the services and suggestions below, it’s always a good idea to make sure you have backups (that you store somewhere other than the same place your website is!). Many hosts and website platforms have this included, but it’s best to also have additional, offline copies.</p>
 </li>
