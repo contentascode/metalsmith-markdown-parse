@@ -2,14 +2,14 @@
 
 ### step_identifier
 
-A question?
+A question and [a link](https://example.com)?
 
   - [Next](#next_step)
   - [End step](#final_step_end)
 
 ### next_step
 
-> Some contextual information about this step
+> Some contextual information about this step with [a link](https://example.com)
 
 Another question?
 

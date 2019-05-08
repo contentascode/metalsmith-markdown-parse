@@ -1,11 +1,11 @@
 if !path.name.endsWith('_end')
   if intro
-    p= intro
+    != intro
   if description
-    p= description
+    != description
   blockquote!= quote
   if outro
-    p= outro
+    != outro
   p!= list
 else
   != contents

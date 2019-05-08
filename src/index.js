@@ -87,7 +87,8 @@ function plugin(options) {
         processed[key] = parsing.value
           ? parsing.value.array().map(question =>
             {
-              // console.log('question', question)
+              console.log('question', JSON.stringify(question,true,2))
+              // Render markdown inside parsed fields
               return question ? question.reduce(
                     ({ ...fields }, field) => ({
                       ...fields,
@@ -110,6 +111,12 @@ function plugin(options) {
                               )
                               .replace(/<a href="#/g, '<a href="../'),
                           }
+                        : field.intro
+                        ? { description: marked(field.intro).trim()}
+                        : field.description
+                        ? { description: marked(field.description).trim()}
+                        : field.outro
+                        ? { description: marked(field.outro).trim()}
                         : field),
                     }),
                     {}

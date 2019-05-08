@@ -30,40 +30,40 @@ describe('metalsmith-markdown-parse', function() {
         done()
       })
   })
-
-  it('should deal with quotes properly', function(done) {
-    Metalsmith('test/fixtures/quotes')
-      .metadata({ organisations: [] })
-      .use(
-        parse({
-          title: 'Workflow',
-          replace: '<a href="$start">Start</a>',
-        })
-      )
-      .use(paths())
-      .use(layouts({ default: 'default.pug', directory: '../../layouts' }))
-      .build(function(err) {
-        if (err) return done(err)
-        equal('test/fixtures/quotes/build', 'test/fixtures/quotes/expected')
-        done()
-      })
-  })
-
-  it('should deal with a complex example', function(done) {
-    Metalsmith('test/fixtures/complex')
-      .metadata({ organisations: [] })
-      .use(
-        parse({
-          title: 'Workflow',
-          replace: '<a href="$start">Start</a>',
-        })
-      )
-      .use(paths())
-      .use(layouts({ default: 'default.pug', directory: '../../layouts' }))
-      .build(function(err) {
-        if (err) return done(err)
-        equal('test/fixtures/complex/build', 'test/fixtures/complex/expected')
-        done()
-      })
-  })
+  // 
+  // it('should deal with quotes properly', function(done) {
+  //   Metalsmith('test/fixtures/quotes')
+  //     .metadata({ organisations: [] })
+  //     .use(
+  //       parse({
+  //         title: 'Workflow',
+  //         replace: '<a href="$start">Start</a>',
+  //       })
+  //     )
+  //     .use(paths())
+  //     .use(layouts({ default: 'default.pug', directory: '../../layouts' }))
+  //     .build(function(err) {
+  //       if (err) return done(err)
+  //       equal('test/fixtures/quotes/build', 'test/fixtures/quotes/expected')
+  //       done()
+  //     })
+  // })
+  //
+  // it('should deal with a complex example', function(done) {
+  //   Metalsmith('test/fixtures/complex')
+  //     .metadata({ organisations: [] })
+  //     .use(
+  //       parse({
+  //         title: 'Workflow',
+  //         replace: '<a href="$start">Start</a>',
+  //       })
+  //     )
+  //     .use(paths())
+  //     .use(layouts({ default: 'default.pug', directory: '../../layouts' }))
+  //     .build(function(err) {
+  //       if (err) return done(err)
+  //       equal('test/fixtures/complex/build', 'test/fixtures/complex/expected')
+  //       done()
+  //     })
+  // })
 })
