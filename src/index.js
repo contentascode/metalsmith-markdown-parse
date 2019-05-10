@@ -75,7 +75,7 @@ function plugin(options) {
           ? parsing_raw.value
               .array()
               .map(question =>
-                 question.reduce(
+                question.reduce(
                   ({ ...fields }, field) => ({ ...fields, ...field }),
                   {}
                 )
@@ -85,10 +85,10 @@ function plugin(options) {
         // console.log('raw[' + key + ']', raw[key])
 
         processed[key] = parsing.value
-          ? parsing.value.array().map(question =>
-            {
+          ? parsing.value.array().map(question => {
               // Render markdown inside parsed fields
-              return question ? question.reduce(
+              return question
+                ? question.reduce(
                     ({ ...fields }, field) => ({
                       ...fields,
                       ...(field.quote
@@ -111,17 +111,17 @@ function plugin(options) {
                               .replace(/<a href="#/g, '<a href="../'),
                           }
                         : field.intro
-                        ? { description: marked(field.intro).trim()}
+                        ? { description: marked(field.intro).trim() }
                         : field.description
-                        ? { description: marked(field.description).trim()}
+                        ? { description: marked(field.description).trim() }
                         : field.outro
-                        ? { description: marked(field.outro).trim()}
+                        ? { description: marked(field.outro).trim() }
                         : field),
                     }),
                     {}
-                  ) : question
-            }
-            )
+                  )
+                : question
+            })
           : []
 
         // console.log('processed[' + key + ']', processed[key])
@@ -173,6 +173,7 @@ function plugin(options) {
             const processed = raw.replace(
               /<p>:<a href="(.*)"><\/a><\/p>/gm,
               collection
+                .filter(({ language: orglang }) => orglang === file.language)
                 .filter(item => {
                   // console.log('item', item)
                   return filter.split('&amp;').some(f => {
@@ -188,16 +189,21 @@ function plugin(options) {
                     // )
                     //
                     try {
-                      const ret = f.split('=')[0] != ''
-                        ? item[f.split('=')[0]]
-                            .split(',')
-                            .map(s => s.trim())
-                            .includes(f.split('=')[1])
-                        : true
+                      const ret =
+                        f.split('=')[0] != ''
+                          ? item[f.split('=')[0]]
+                              .split(',')
+                              .map(s => s.trim())
+                              .includes(f.split('=')[1])
+                          : true
                       return ret
-                    }
-                    catch (e) {
-                      console.log(`Error while reading transclusion link in ${key}. Syntax should be \`:[](organisations?services=foo&services=bar)\` and found \`${filter.replace('&amp;', '&')}\` instead.`)
+                    } catch (e) {
+                      console.log(
+                        `Error while reading transclusion link in ${key}. Syntax should be \`:[](organisations?services=foo&services=bar)\` and found \`${filter.replace(
+                          '&amp;',
+                          '&'
+                        )}\` instead.`
+                      )
                     }
                   })
                 })
@@ -260,13 +266,10 @@ function plugin(options) {
         file.contents = tree[key][0]
           ? new Buffer(
               // add end of file newline to match until Workflow end.
-              (file.contents
-                .toString() + '\n')
-                .replace(
-                  /## Workflow((\s|\S)*?)(.*\n)*/gm,
-                  replace.replace('$start', 'questions/' + tree[key][0].id) +
-                    '\n'
-                )
+              (file.contents.toString() + '\n').replace(
+                /## Workflow((\s|\S)*?)(.*\n)*/gm,
+                replace.replace('$start', 'questions/' + tree[key][0].id) + '\n'
+              )
             )
           : file.contents
 
@@ -298,7 +301,10 @@ function plugin(options) {
           if (files[tips]) {
             const arr_tips = files[tips].contents
               .toString()
-              .replace(/<h2 id="resources">Resources<\/h2>/gi, '<-----resource----->')
+              .replace(
+                /<h2 id="resources">Resources<\/h2>/gi,
+                '<-----resource----->'
+              )
               .split('<-----resource----->')
             files[k].tips = arr_tips[0]
             files[k].resources = arr_tips[1]
