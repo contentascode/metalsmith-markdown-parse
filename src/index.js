@@ -7,6 +7,12 @@ const pug = require('pug')
 const { Streams } = require('@masala/parser')
 
 const parse = require('./parse')
+const { PerformanceObserver, performance } = require('perf_hooks')
+
+const obs = new PerformanceObserver(items => {
+  debug(items.getEntries()[0].name, items.getEntries()[0].duration)
+})
+obs.observe({ entryTypes: ['measure'] })
 
 /**
  * Expose `plugin`.
@@ -43,12 +49,15 @@ function plugin(options) {
     layout = 'question.pug',
   } = options || {}
 
+  const parse_workflow = parse.workflow()
+  const parse_workflow_raw = parse.workflow_raw()
+
   return function markdown_parse(files, metalsmith, done) {
     const tree = {},
       raw = {},
       processed = {}
-
     const process = (file, key, cb) => {
+      performance.mark('A')
       // console.log('key', key);
       if (minimatch(key, pattern)) {
         const tokens = marked.lexer(file.contents.toString(), options)
@@ -62,10 +71,10 @@ function plugin(options) {
         //   { type: "blah", text: "a" }
         // ]);
 
-        const parsing = parse.workflow().parse(stream)
+        const parsing = parse_workflow.parse(stream)
         // console.log('parsing.value', JSON.stringify(parsing.value, true, 2))
         // the workflow_raw parser only splits by questions but parses what's between as raw content.
-        const parsing_raw = parse.workflow_raw().parse(stream)
+        const parsing_raw = parse_workflow_raw.parse(stream)
         // console.log(
         //   'parsing_raw.value',
         //   JSON.stringify(parsing_raw.value, true, 2)
@@ -84,45 +93,99 @@ function plugin(options) {
 
         // console.log('raw[' + key + ']', raw[key])
 
-        processed[key] = parsing.value
-          ? parsing.value.array().map(question => {
-              // Render markdown inside parsed fields
-              return question
-                ? question.reduce(
-                    ({ ...fields }, field) => ({
-                      ...fields,
-                      ...(field.quote
-                        ? {
-                            quote: marked.parser(
-                              Object.defineProperty(field.quote, 'links', {
-                                value: {},
-                              })
-                            ),
-                          }
-                        : field.list
-                        ? {
-                            list: marked
-                              .parser(
-                                // field.list
-                                Object.defineProperty(field.list, 'links', {
+        const process_list = list =>
+          list.map(item => {
+            if (item.list) {
+              return {
+                type: 'html',
+                text: marked.parser(
+                  Object.defineProperty(process_list(item.list), 'links', {
+                    value: {},
+                  })
+                ),
+              }
+            } else {
+              return item
+            }
+          })
+
+        performance.mark('B')
+        performance.measure('A to B: ' + key, 'A', 'B')
+
+        try {
+          processed[key] = parsing.value
+            ? parsing.value.array().map(question => {
+                // Render markdown inside parsed fields
+                return question
+                  ? question.reduce(({ ...fields }, field) => {
+                      // if (field.list) {
+                      //   console.log(
+                      //     'field.list',
+                      //     JSON.stringify(field.list, 2, true)
+                      //   )
+                      //   // field.list = field.list.filter(item => !item.list)
+                      //   console.log(
+                      //     'process_list(field.list)',
+                      //     JSON.stringify(process_list(field.list), 2, true)
+                      //   )
+                      //   console.log(
+                      //     'parser#',
+                      //     marked
+                      //       .parser(
+                      //         // field.list
+                      //         Object.defineProperty(
+                      //           process_list(field.list),
+                      //           'links',
+                      //           {
+                      //             value: {},
+                      //           }
+                      //         )
+                      //       )
+                      //       .replace(/<a href="#/g, '<a href="../')
+                      //   )
+                      // }
+                      return {
+                        ...fields,
+                        ...(field.quote
+                          ? {
+                              quote: marked.parser(
+                                // field.quote
+                                Object.defineProperty(field.quote, 'links', {
                                   value: {},
                                 })
-                              )
-                              .replace(/<a href="#/g, '<a href="../'),
-                          }
-                        : field.intro
-                        ? { description: marked(field.intro).trim() }
-                        : field.description
-                        ? { description: marked(field.description).trim() }
-                        : field.outro
-                        ? { description: marked(field.outro).trim() }
-                        : field),
-                    }),
-                    {}
-                  )
-                : question
-            })
-          : []
+                              ),
+                            }
+                          : field.list
+                          ? {
+                              list: marked
+                                .parser(
+                                  Object.defineProperty(
+                                    process_list(field.list),
+                                    'links',
+                                    {
+                                      value: {},
+                                    }
+                                  )
+                                )
+                                .replace(/<a href="#/g, '<a href="../'),
+                            }
+                          : field.intro
+                          ? { description: marked(field.intro).trim() }
+                          : field.description
+                          ? { description: marked(field.description).trim() }
+                          : field.outro
+                          ? { description: marked(field.outro).trim() }
+                          : field),
+                      }
+                    }, {})
+                  : question
+              })
+            : []
+        } catch (e) {
+          console.error(e)
+          console.log('parsing.value.array()', parsing.value.array())
+          throw e
+        }
 
         // console.log('processed[' + key + ']', processed[key])
 
@@ -151,6 +214,8 @@ function plugin(options) {
         })
 
         // console.log('tree[' + key + ']', JSON.stringify(tree[key], true, 2))
+        performance.mark('C')
+        performance.measure('B to C: ' + key, 'B', 'C')
 
         tree[key].forEach(
           ({ id: index, intro, description, quote, list, outro, raw = '' }) => {
@@ -251,7 +316,7 @@ function plugin(options) {
               ...(file.permalink
                 ? { permalink: path.join(file.permalink, index) }
                 : null),
-              contents: new Buffer(
+              contents: Buffer.from(
                 processed // remove newline only paragraphs
                   .replace('<p>\n</p>', '')
               ),
@@ -260,11 +325,13 @@ function plugin(options) {
             files[newKey] = newFile
           }
         )
+        performance.mark('D')
+        performance.measure('C to D: ' + key, 'C', 'D')
 
         // If tree[key] has content then we parsed a workflow and replace the section
         // console.log('file.contents', file.contents.toString())
         file.contents = tree[key][0]
-          ? new Buffer(
+          ? Buffer.from(
               // add end of file newline to match until Workflow end.
               (file.contents.toString() + '\n').replace(
                 /## Workflow((\s|\S)*?)(.*\n)*/gm,
@@ -278,14 +345,24 @@ function plugin(options) {
         // console.log('file[' + title.toLowerCase() + ']', tree[key].workflow);
         // const parsed = md.parse(file.contents.toString());
         // console.log('parsed', JSON.stringify(parsed, true, 2));
-        return cb(null, file)
+
+        // return cb(null, file)
+        performance.mark('E')
+        performance.measure('D to E: ' + key, 'D', 'E')
+        performance.measure('== A to E: ' + key, 'A', 'E')
+        performance.clearMarks()
+
+        return setImmediate(cb, null, file)
       }
-      cb(null, file)
+      performance.mark('E')
+      performance.measure('<> A to E: ' + key, 'A', 'E')
+      performance.clearMarks()
+      setImmediate(cb, null, file)
+      // cb(null, file)
     }
 
-    async.mapValues(files, process, err => {
+    async.mapValuesSeries(files, process, err => {
       if (err) throw err
-
       debug('Object.keys(files)', JSON.stringify(Object.keys(files), true, 2))
 
       // Add #final_tips section in _end questions.
@@ -312,7 +389,7 @@ function plugin(options) {
           // delete files[tips]
         })
 
-      done()
+      setImmediate(done)
     })
   }
 }
