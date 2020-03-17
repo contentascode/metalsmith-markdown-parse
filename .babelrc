@@ -1,7 +1,7 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
           "node": "4"
@@ -11,13 +11,13 @@
   ],
   "plugins": [
     [
-      "transform-object-rest-spread",
+      "@babel/plugin-proposal-object-rest-spread",
       {
         "useBuiltIns": true
       }
     ],
     [
-      "babel-plugin-stack-trace-sourcemap",
+      "babel-plugin-source-map-support",
       {
         "execute": true,
         "importOverride": ["source-map-support", "install", "_sourceMapSupport"]
