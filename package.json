@@ -36,7 +36,7 @@
     "source-map-support": "^0.4.15"
   },
   "dependencies": {
-    "@masala/parser": "^0.7.0",
+    "@masala/parser": "^0.8.1",
     "async": "^3.2.0",
     "commonmark": "^0.29.1",
     "debug": "^3.1.0",
