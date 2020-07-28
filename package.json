@@ -43,7 +43,7 @@
     "html2jade": "^0.8.6",
     "lodash": "^4.17.15",
     "markdown-it": "^8.4.2",
-    "marked": "^0.8.0",
+    "marked": "^1.1.1",
     "minimatch": "^3.0.0",
     "pug": "^2.0.3"
   }
