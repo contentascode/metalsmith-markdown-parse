@@ -41,7 +41,7 @@
     "commonmark": "^0.29.1",
     "debug": "^3.1.0",
     "html2jade": "^0.8.6",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.17",
     "markdown-it": "^8.4.2",
     "marked": "^0.8.0",
     "minimatch": "^3.0.0",
