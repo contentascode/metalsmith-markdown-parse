@@ -44,7 +44,7 @@
     "lodash": "^4.17.15",
     "markdown-it": "^8.4.2",
     "marked": "^0.8.0",
-    "minimatch": "^3.0.0",
+    "minimatch": "^3.0.5",
     "pug": "^2.0.3"
   }
 }
