@@ -39,7 +39,7 @@
     "@masala/parser": "^0.7.0",
     "async": "^3.2.0",
     "commonmark": "^0.29.1",
-    "debug": "^3.1.0",
+    "debug": "^3.2.7",
     "html2jade": "^0.8.6",
     "lodash": "^4.17.15",
     "markdown-it": "^8.4.2",
